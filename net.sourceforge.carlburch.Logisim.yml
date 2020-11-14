@@ -28,7 +28,7 @@ modules:
     build-commands:
         - install -D net.sourceforge.carlburch.Logisim.metainfo.xml /app/share/metainfo/net.sourceforge.carlburch.Logisim.metainfo.xml
         - install -D net.sourceforge.carlburch.Logisim.png /app/share/icons/hicolor/128x128/apps/net.sourceforge.carlburch.Logisim.png
-        - install -D net.sourceforge.carlburch.Logisim.jar /app/bin/net.sourceforge.carlburch.Logisim.jar
+        - install -D Logisim.jar /app/bin/Logisim.jar
         - install -D Logisim.sh /app/bin/Logisim.sh
         - install -D net.sourceforge.carlburch.Logisim.desktop /app/share/applications/net.sourceforge.carlburch.Logisim.desktop
     sources:

@@ -2,7 +2,7 @@
 Name=Logisim
 GenericName=Logisim Logic Circuit Simulator
 Comment=Digital Logic Circuit Simulator
-Exec=LogisimEvolution.sh
+Exec=Logisim.sh
 Icon=net.sourceforge.carlburch.Logisim
 Terminal=false
 Type=Application

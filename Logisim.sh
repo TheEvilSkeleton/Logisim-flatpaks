@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar /app/bin/LogisimEvolution.jar  $@
+java -jar /app/bin/Logisim.jar  $@
