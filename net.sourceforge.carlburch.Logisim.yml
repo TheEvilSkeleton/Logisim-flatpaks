@@ -1,0 +1,46 @@
+app-id: net.sourceforge.carlburch.Logisim
+runtime: org.freedesktop.Platform
+runtime-version: '20.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk11
+  
+command: Logisim.sh
+finish-args:
+  - --socket=fallback-x11
+  - --env=PATH=/usr/bin:/app/bin:/app/jre/bin
+  - --env=JAVA_HOME=/app/jre
+  - --filesystem=xdg-documents
+  - --persist=.java
+
+build-options:
+    env:
+        JAVA_HOME: /usr/lib/sdk/openjdk11/
+
+modules:
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk11/install.sh
+
+  - name: Logisim
+    buildsystem: simple
+    build-commands:
+        - install -D net.sourceforge.carlburch.Logisim.metainfo.xml /app/share/metainfo/net.sourceforge.carlburch.Logisim.metainfo.xml
+        - install -D net.sourceforge.carlburch.Logisim.png /app/share/icons/hicolor/128x128/apps/net.sourceforge.carlburch.Logisim.png
+        - install -D net.sourceforge.carlburch.Logisim.jar /app/bin/net.sourceforge.carlburch.Logisim.jar
+        - install -D Logisim.sh /app/bin/Logisim.sh
+        - install -D net.sourceforge.carlburch.Logisim.desktop /app/share/applications/net.sourceforge.carlburch.Logisim.desktop
+    sources:
+      - type: file
+        path: net.sourceforge.carlburch.Logisim.metainfo.xml
+      - type: file
+        path: net.sourceforge.carlburch.Logisim.png
+      - type: file
+        path: net.sourceforge.carlburch.Logisim.desktop
+      - type: file
+        path: Logisim.sh
+      - type: file
+        url: https://sourceforge.net/projects/circuit/files/2.7.x/2.7.1/logisim-generic-2.7.1.jar
+        dest-filename: Logisim.jar
+        sha256: 362a78c12ad18c203fed868872c4a01cd9c12141379d92e892bbe2c37e627bc2

@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Logisim Evolution
+Name=Logisim
 GenericName=Logisim Logic Circuit Simulator
 Comment=Digital Logic Circuit Simulator
 Exec=LogisimEvolution.sh
-Icon=com.github.reds.LogisimEvolution
+Icon=net.sourceforge.carlburch.Logisim
 Terminal=false
 Type=Application
 Categories=Electronics
