@@ -23,11 +23,6 @@
   ranging from a brief unit on logic in general-education computer science surveys,
   to computer organization courses, to full-semester courses on computer architecture.
 </p>
-  <p>
-  We have decided to release this new Logisim version under the name logisim-evolution,
-  to highlight the large number of changes that occurred in these years,
-  and we actively seek the contribution of the community.
-</p>
  </description>
  <releases>
    <release version="2.7.1" date="2011-03-21"/>
