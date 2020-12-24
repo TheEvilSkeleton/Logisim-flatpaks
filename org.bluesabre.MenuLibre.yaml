@@ -1,0 +1,78 @@
+app-id: org.bluesabre.MenuLibre
+runtime: org.gnome.Platform
+runtime-version: '3.38'
+sdk: org.gnome.Sdk
+command: menulibre
+rename-icon: menulibre
+rename-desktop-file: menulibre.desktop
+finish-args:
+  - '--filesystem=host:ro'
+  - '--socket=fallback-x11'
+  - '--socket=wayland'
+  - '--share=ipc'
+  - '--filesystem=xdg-data/applications:create'
+
+cleanup:
+  - '/include'
+  - '/lib/peas-demo'
+  - '/lib/pkgconfig'
+  - '/man'
+  - '/share/aclocal'
+  - '/share/gtk-doc'
+  - '/share/man'
+  - '/share/metainfo'
+  - '/share/pkgconfig'
+  - '/share/vala'
+  - '*.a'
+  - '*.la'
+  - '*.pyc'
+  - '__pycache__'
+
+modules:
+
+  - name: python-distutils-extra
+    buildsystem: simple
+    build-commands:
+      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} "python-distutils-extra"'
+    sources:
+      - type: file
+        url: https://launchpad.net/python-distutils-extra/trunk/2.39/+download/python-distutils-extra-2.39.tar.gz
+        sha256: 723f24f4d65fc8d99b33a002fbbb3771d4cc9d664c97085bf37f3997ae8063af
+
+  - name: intltools
+    buildsystem: autotools
+    sources:
+      - type: archive
+        url: https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz
+        sha256: 67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
+
+  - name: gnome-menu
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/gnome-menus.git
+
+  - name: gir
+    buildsystem: autotools
+    sources:
+      - type: archive
+        url: http://deb.debian.org/debian/pool/main/g/gtk+3.0/gtk+3.0_3.24.24.orig.tar.xz
+        sha256: cc9d4367c55b724832f6b09ab85481738ea456871f0381768a6a99335a98378a
+
+  - name: python-psutil
+    buildsystem: simple
+    build-commands:
+      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} "psutil"'
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/e1/b0/7276de53321c12981717490516b7e612364f2cb372ee8901bd4a66a000d7/psutil-5.8.0.tar.gz
+        sha256: 0c9ccb99ab76025f2f0bbecf341d4656e9c1351db8cc8a03ccd62e318ab4b5c6
+
+  - name: menulibre
+    buildsystem: simple
+    build-commands:
+      - 'python3 setup.py install --prefix=${FLATPAK_DEST}'
+    sources:
+      - type: archive
+        url: https://github.com/bluesabre/menulibre/releases/download/menulibre-2.2.1/menulibre-2.2.1.tar.gz
+        sha256: 5b3ef8e6073d584f6accf282fa1eb649185ee42eb22fab70231491c7377d7e8f
