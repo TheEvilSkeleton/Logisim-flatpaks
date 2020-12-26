@@ -12,6 +12,7 @@ finish-args:
   - '--share=ipc'
   - '--filesystem=xdg-data/applications:create'
   - '--filesystem=~/.local/share/flatpak:ro'
+  - '--talk-name=org.freedesktop.Flatpak'
 
 cleanup:
   - '/include'
