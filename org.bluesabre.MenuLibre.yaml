@@ -2,7 +2,7 @@ app-id: org.bluesabre.MenuLibre
 runtime: org.gnome.Platform
 runtime-version: '3.38'
 sdk: org.gnome.Sdk
-command: menulibre
+command: menulibre.sh
 rename-icon: menulibre
 rename-desktop-file: menulibre.desktop
 finish-args:
