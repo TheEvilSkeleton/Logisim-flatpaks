@@ -1,0 +1,170 @@
+app-id: org.audacityteam.Audacity
+default-branch: stable
+# freedesktop-sdk should work too, but causes problems with
+# the timeline mouse cursor on some systems for unkown reasons
+runtime: org.gnome.Platform
+runtime-version: '40'
+sdk: org.gnome.Sdk
+command: audacity
+rename-desktop-file: audacity.desktop
+rename-icon: audacity
+rename-appdata-file: audacity.appdata.xml
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --share=network # Audacity uses network sockets for IPC
+  - --socket=pulseaudio
+  - --device=all # ALSA
+  - --filesystem=host
+  - --env=ALSA_CONFIG_PATH=
+  - --env=LADSPA_PATH=/app/extensions/Plugins/ladspa
+  - --env=LV2_PATH=/app/extensions/Plugins/lv2
+  # Audacity uses VST_PATH
+  - --env=VST_PATH=/app/extensions/Plugins/lxvst
+
+add-extensions:
+  org.audacityteam.Audacity.Codecs:
+    directory: lib/codecs
+    add-ld-path: lib
+    bundle: true
+    autodelete: true
+  org.freedesktop.LinuxAudio.Plugins:
+    directory: extensions/Plugins
+    version: '20.08'
+    add-ld-path: lib
+    merge-dirs: ladspa;lv2;lxvst
+    subdirectories: true
+    no-autodownload: true
+
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /share/aclocal
+  - /share/man
+  - '*.la'
+  - '*.a'
+modules:
+
+  - name: wxwidgets
+    rm-configure: true
+    config-opts:
+      - --with-libpng
+      - --with-zlib
+      - --with-cxx=14
+      - --disable-sdltest
+      - --disable-webkit
+      - --disable-webview
+      - --disable-webviewwebkit
+      - --disable-ribbon
+      - --disable-propgrid
+      - --disable-richtext
+      - --with-expat=builtin
+      - --with-libiconv=/usr
+    cleanup:
+      - /bin
+      - /lib/wx
+      - /share/bakefile
+    sources:
+      - type: git # they want their fork
+        url: https://github.com/audacity/wxWidgets
+        # branch: audacity-fixes-3.1.3
+        commit: 07e7d832c7a337aedba3537b90b2c98c4d8e2985
+
+  - name: ffmpeg
+    config-opts:
+      - --enable-shared
+      - --disable-static
+      - --disable-programs
+      - --disable-doc
+      - --disable-everything
+      - --enable-libopus
+      - --enable-libmp3lame
+      - --enable-decoder=ac3
+      - --enable-decoder=opus
+      - --enable-decoder=mp3
+      - --enable-encoder=ac3
+      - --enable-demuxer=ac3
+      - --enable-demuxer=mov
+      - --enable-demuxer=mp3
+      - --enable-demuxer=ogg
+      - --enable-muxer=ac3
+      - --enable-muxer=ipod
+      - --enable-muxer=opus
+      - --enable-parser=ac3
+      - --enable-parser=opus
+    cleanup:
+      - /share/ffmpeg/examples
+    sources:
+      - type: archive
+        url: https://www.ffmpeg.org/releases/ffmpeg-4.2.3.tar.xz
+        sha256: 9df6c90aed1337634c1fb026fb01c154c29c82a64ea71291ff2da9aacb9aad31
+
+  - name: ffmpeg-codecs
+    config-opts:
+      # all codecs/formats are enabled to allow audio extraction from movie files
+      - --enable-shared
+      - --disable-static
+      - --disable-programs
+      - --disable-doc
+      - --disable-avdevice
+      - --enable-libopus
+      - --enable-libmp3lame
+      - --prefix=/app/lib/codecs
+    cleanup:
+      - /lib/codecs/include
+      - /lib/codecs/lib/pkgconfig
+      - /lib/codecs/share
+    sources:
+      - type: archive
+        url: https://www.ffmpeg.org/releases/ffmpeg-4.2.3.tar.xz
+        sha256: 9df6c90aed1337634c1fb026fb01c154c29c82a64ea71291ff2da9aacb9aad31
+
+  - name: sqlite
+    # version bundled with runtime is missing the SQLITE_DBPAGE virtual table
+    build-options:
+      cflags: >
+        -DSQLITE_ENABLE_COLUMN_METADATA=1
+        -DSQLITE_SECURE_DELETE=1
+        -DSQLITE_ENABLE_FTS3=1
+        -DSQLITE_ENABLE_UNLOCK_NOTIFY=1
+        -DSQLITE_ENABLE_DBPAGE_VTAB=1
+        -DSQLITE_ENABLE_DBSTAT_VTAB=1
+    config-opts:
+      - --enable-fts5
+    sources:
+      - type: archive
+        url: https://www.sqlite.org/2020/sqlite-autoconf-3340000.tar.gz
+        sha256: bf6db7fae37d51754737747aaaf413b4d6b3b5fbacd52bdb2d0d6e5b2edd9aee
+
+  - name: chrpath
+    cleanup:
+      - '*'
+    sources:
+      - type: archive
+        url: https://alioth-archive.debian.org/releases/chrpath/chrpath/0.16/chrpath-0.16.tar.gz
+        sha256: bb0d4c54bac2990e1bdf8132f2c9477ae752859d523e141e72b3b11a12c26e7b
+
+  - name: audacity
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_LIBDIR=/app/lib
+    post-install:
+      - chrpath -d /app/bin/audacity
+      - mv /app/share/mime/packages/{audacity.xml,org.audacityteam.Audacity.xml}
+      - install -Dm644 ../help/audacity.appdata.xml -t /app/share/metainfo
+      - install -d /app/extensions/Plugins
+    cleanup:
+      - /share/audacity/include
+      - /share/pixmaps
+    sources:
+      - type: git
+        url: https://github.com/audacity/audacity.git
+        commit: ff5003a9db528c19edd785b288f215d9cae2bf38
+        tag: Audacity-3.0.2
+      - type: patch
+        path: audacity-suil-fix.patch
+      - type: shell
+        commands:
+          - sed -e '42i <release version="3.0.2" date="2021-04-19"/>' -i help/audacity.appdata.xml
