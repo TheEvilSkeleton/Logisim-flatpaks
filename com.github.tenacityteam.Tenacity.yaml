@@ -1,4 +1,4 @@
-app-id: org.audacityteam.Audacity
+app-id: com.github.tenacityteam.Tenacity
 default-branch: stable
 # freedesktop-sdk should work too, but causes problems with
 # the timeline mouse cursor on some systems for unkown reasons
@@ -45,6 +45,7 @@ cleanup:
   - '*.a'
 modules:
 
+  - python3-conan.json
   - name: wxwidgets
     rm-configure: true
     config-opts:
@@ -144,7 +145,7 @@ modules:
         url: https://alioth-archive.debian.org/releases/chrpath/chrpath/0.16/chrpath-0.16.tar.gz
         sha256: bb0d4c54bac2990e1bdf8132f2c9477ae752859d523e141e72b3b11a12c26e7b
 
-  - name: audacity
+  - name: tenacity
     buildsystem: cmake-ninja
     builddir: true
     config-opts:
@@ -160,11 +161,7 @@ modules:
       - /share/pixmaps
     sources:
       - type: git
-        url: https://github.com/audacity/audacity.git
-        commit: ff5003a9db528c19edd785b288f215d9cae2bf38
-        tag: Audacity-3.0.2
-      - type: patch
-        path: audacity-suil-fix.patch
+        url: https://github.com/tenacityteam/tenacity.git
       - type: shell
         commands:
           - sed -e '42i <release version="3.0.2" date="2021-04-19"/>' -i help/audacity.appdata.xml
